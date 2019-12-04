@@ -1,0 +1,5 @@
+src/seq
+src/multi
+src/gpu
+*.o
+*.csv
