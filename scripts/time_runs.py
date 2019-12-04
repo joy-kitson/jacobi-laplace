@@ -48,7 +48,7 @@ def set_env_vars(env_vars):
 
 def time_run(app, rows, cols):
     # time using the in-built bash command
-    cmd = '{} {} {}'.format(app, rows, cols)
+    cmd = '{} {} {}'.format(os.path.join('.', app), rows, cols)
     output = subprocess.check_output(cmd, \
                                      stderr=subprocess.STDOUT, \
                                      shell=True
