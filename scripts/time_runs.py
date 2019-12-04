@@ -3,8 +3,6 @@
 import os
 import re
 import subprocess
-import numpy as np
-import pandas as pd
 import argparse
 
 TIME_REGEX = r'total:\s([0-9]+.[0-9]+)\ss'
@@ -16,12 +14,10 @@ def parse_args():
     parser.add_argument('app_paths', nargs='+',\
                         help='Tells the script where to find the executables to time')
     #optional args
-    parser.add_argument('--row_range', type=int, nargs=2, default=[10,13],\
-                        help='The range of rows to run with, as powers of 2' +\
-                             '(ex: \"--row_range 1 3\" will time with 2, 4, and 8 rows)')
-    parser.add_argument('--col_range', type=int, nargs=2, default=[10,13],\
-                        help='The range of columns to run with, as orders of magnitiude' +\
-                             '(ex: \"--col_range 1 3\" will time with 2, 4, and 8 columns)')
+    parser.add_argument('--size_range', type=int, nargs=2, default=[10,13],\
+                        help='The range of input sizes to run with, as powers of 2' +\
+                             '(ex: \"--size_range 1 3\" will time with inputs of size 2 by 2, 4 by 4,'\
+                             +'and 8 by 8)')
     parser.add_argument('--iters', type=int, default=10,\
                         help='The number of times to run each configuration before averaging the runtimes')
     parser.add_argument('--out_path', default='{}_times.csv',\
@@ -62,32 +58,30 @@ def time_run(app, rows, cols):
 
 def main():
     args = parse_args()
-    row_min, row_max = args.row_range
-    col_min, col_max = args.col_range
+    size_min, size_max = args.size_range
     out_path = args.out_path
     iters = args.iters
     apps = args.app_paths
     set_env_vars(args.env_vars)
 
     def collect_timing_data(app, out_file):
-        data = [[2**c for c in range(col_min, col_max + 1)]]
+        data = [[2**c for c in range(size_min, size_max + 1)]]
         app_name = os.path.basename(app)
         out_file.write('Input Size,{}\n'.format(app_name))
 
         data_row = []
-        for c in range(col_min, col_max + 1):
-            col_arg = 2**c
-            row_arg = col_arg
+        for c in range(size_min, size_max + 1):
+            size_arg = 2**c
             
             total_time = 0
             for i in range(iters):
-                total_time += time_run(app, row_arg, col_arg)
+                total_time += time_run(app, size_arg, size_arg)
             ave_time = float(total_time) / iters
             data_row.append(ave_time)
             
             print('{} averaged {}s with {} rows and {} cols'\
-                  .format(app_name, ave_time, row_arg, col_arg))
-            out_file.write('{} x {},{}\n'.format(row_arg, col_arg, ave_time))
+                  .format(app_name, ave_time, size_arg, size_arg))
+            out_file.write('{} x {},{}\n'.format(size_arg, size_arg, ave_time))
 
         data.append(data_row)
         return data
