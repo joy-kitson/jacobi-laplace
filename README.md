@@ -1,8 +1,7 @@
 # Jacobi/Laplace2D OpenACC Example Code
 
 Note: These instructions have been tested on Vader. Many of the commands below will not work on Windows,
-and the module commands will probably only work on a node of a computing cluster (of which Vader is an
-example)
+and the module commands will probably only work on a node of a computing cluster
 
 Compiling
 ------
@@ -191,3 +190,6 @@ a brief summary of how to use it:
 * For more help, running `<path_to_scripts_dir>/time_runs.py --help` will bring up more detailed
   information on the arguments you can use. 
   
+Timing Data Results
+-------
+If you'd like to compare your timing results to mine, check out `runtimes.xlsx` in the data directory.
