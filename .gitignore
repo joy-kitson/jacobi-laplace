@@ -1,2 +1,5 @@
-src/{seq,multi,gpu}
+src/seq
+src/multi
+src/gpu
 *.o
+*.csv
